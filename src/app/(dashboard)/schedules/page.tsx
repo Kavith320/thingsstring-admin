@@ -2,6 +2,8 @@
 import { SchedulesTable } from "@/components/SchedulesTable";
 import { fetchWithAuth } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 type Schedule = {
     _id: string;
     name: string;
@@ -20,7 +22,7 @@ async function getSchedules() {
         const data = await res.json();
         return data.schedules as Schedule[];
     } catch (error: any) {
-        if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+        if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;
         }
         console.error("Error fetching schedules:", error);

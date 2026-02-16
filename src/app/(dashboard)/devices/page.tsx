@@ -2,6 +2,8 @@ import { fetchWithAuth } from "@/lib/api";
 import Link from "next/link";
 import { Cpu, ChevronRight } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 type Device = {
     _id: string;
     device: { user_id: string; name?: string };
@@ -19,7 +21,7 @@ async function getDevices() {
         const data = await res.json();
         return data.devices as Device[];
     } catch (error: any) {
-        if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+        if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;
         }
         console.error("Error fetching devices:", error);

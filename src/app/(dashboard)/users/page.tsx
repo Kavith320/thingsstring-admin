@@ -2,6 +2,8 @@
 import { UsersTable } from "@/components/UsersTable";
 import { fetchWithAuth } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 type User = {
     _id: string;
     userId8: string;
@@ -21,7 +23,7 @@ async function getUsers() {
         return data.users as User[];
 
     } catch (error: any) {
-        if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+        if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;
         }
         console.error("Error fetching users:", error);

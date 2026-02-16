@@ -1,6 +1,8 @@
-
 import { Users, Cpu, FileText, Calendar } from "lucide-react";
 import { fetchWithAuth } from "@/lib/api";
+import SystemActivityGraph from "@/components/SystemActivityGraph";
+
+export const dynamic = "force-dynamic";
 
 type Stats = {
     users: number;
@@ -23,7 +25,7 @@ async function getStats() {
         return data.stats as Stats;
 
     } catch (error: any) {
-        if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+        if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;
         }
         console.error("Error fetching stats:", error);
@@ -69,12 +71,9 @@ export default async function DashboardPage() {
                 ))}
             </div>
 
-            {/* Placeholder for charts or recent activity */}
             <div className="mt-8 rounded-lg bg-white p-6 shadow">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">System Activity</h2>
-                <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg">
-                    <span className="text-gray-400">Activity Chart Placeholder</span>
-                </div>
+                <SystemActivityGraph />
             </div>
         </div>
     );

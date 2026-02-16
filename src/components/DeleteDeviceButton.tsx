@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { fetchClient } from "@/lib/api-client";
@@ -39,7 +39,11 @@ export function DeleteDeviceButton({ deviceId }: { deviceId?: string }) {
             disabled={isDeleting}
             className="flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 transition-colors"
         >
-            <Trash2 className="h-4 w-4" />
+            {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+                <Trash2 className="h-4 w-4" />
+            )}
             {isDeleting ? "Deleting..." : "Delete Device"}
         </button>
     );

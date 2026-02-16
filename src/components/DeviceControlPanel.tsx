@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ToggleLeft, ToggleRight, Zap } from "lucide-react";
+import { ToggleLeft, ToggleRight, Zap, Loader2 } from "lucide-react";
 import { fetchClient } from "@/lib/api-client";
 
 interface ActuatorState {
@@ -71,9 +71,11 @@ export function DeviceControlPanel({ deviceId, initialControl }: DeviceControlPa
                     <button
                         onClick={() => toggle(key)}
                         disabled={loading}
-                        className={`transition-colors focus:outline-none ${state.status ? "text-green-600" : "text-gray-400"}`}
+                        className={`transition-all focus:outline-none flex items-center justify-center ${state.status ? "text-green-600" : "text-gray-400"} ${loading ? "opacity-50 cursor-wait" : "hover:scale-110 active:scale-95"}`}
                     >
-                        {state.status ? (
+                        {loading && control[key]?.status !== state.status ? (
+                            <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                        ) : state.status ? (
                             <ToggleRight className="h-8 w-8" />
                         ) : (
                             <ToggleLeft className="h-8 w-8" />
