@@ -10,13 +10,17 @@ interface ActuatorState {
 }
 
 interface DeviceControlPanelProps {
-    deviceId: string;
+    deviceId?: string;
     initialControl: Record<string, ActuatorState>;
 }
 
 export function DeviceControlPanel({ deviceId, initialControl }: DeviceControlPanelProps) {
     const [control, setControl] = useState(initialControl);
     const [loading, setLoading] = useState(false);
+
+    if (!deviceId) {
+        return <div className="text-gray-500 italic">Device ID not available.</div>;
+    }
 
     const toggle = async (key: string) => {
         setLoading(true);

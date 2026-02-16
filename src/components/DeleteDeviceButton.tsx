@@ -5,9 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { fetchClient } from "@/lib/api-client";
 
-export function DeleteDeviceButton({ deviceId }: { deviceId: string }) {
+export function DeleteDeviceButton({ deviceId }: { deviceId?: string }) {
     const router = useRouter();
     const [isDeleting, setIsDeleting] = useState(false);
+
+    if (!deviceId) {
+        return null; // Don't render if no deviceId
+    }
 
     const handleDelete = async () => {
         if (confirm("Are you sure you want to delete this device? This action cannot be undone.")) {
