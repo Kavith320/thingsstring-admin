@@ -13,7 +13,7 @@ type Stats = {
 
 async function getStats() {
     try {
-        const res = await fetchWithAuth("/api/admin/stats", { cache: "no-store" });
+        const res = await fetchWithAuth("/api/admin/stats", { next: { revalidate: 30 } });
         if (!res.ok) {
             console.error("Failed to fetch stats:", res.status, res.statusText);
             // Fallback or rethrow

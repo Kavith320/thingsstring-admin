@@ -14,7 +14,7 @@ type Schedule = {
 
 async function getSchedules() {
     try {
-        const res = await fetchWithAuth("/api/admin/schedules", { cache: "no-store" });
+        const res = await fetchWithAuth("/api/admin/schedules", { next: { revalidate: 60 } });
         if (!res.ok) {
             console.error("Failed to fetch schedules");
             return [];

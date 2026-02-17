@@ -13,7 +13,7 @@ type Device = {
 
 async function getDevices() {
     try {
-        const res = await fetchWithAuth("/api/admin/devices", { cache: "no-store" });
+        const res = await fetchWithAuth("/api/admin/devices", { next: { revalidate: 60 } });
         if (!res.ok) {
             console.error("Failed to fetch devices");
             return [];

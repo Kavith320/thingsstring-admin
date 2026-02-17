@@ -14,7 +14,7 @@ type User = {
 
 async function getUsers() {
     try {
-        const res = await fetchWithAuth("/api/admin/users", { cache: "no-store" });
+        const res = await fetchWithAuth("/api/admin/users", { next: { revalidate: 60 } });
         if (!res.ok) {
             console.error("Failed to fetch users");
             return [];

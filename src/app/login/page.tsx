@@ -19,11 +19,18 @@ export default function LoginPage() {
 
         try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
             const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
+                signal: controller.signal,
             });
+
+            clearTimeout(timeoutId);
 
             if (res.ok) {
                 const data = await res.json();
