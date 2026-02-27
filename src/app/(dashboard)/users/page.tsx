@@ -1,5 +1,6 @@
 
 import { UsersTable } from "@/components/UsersTable";
+import { CreateUserModal } from "@/components/CreateUserModal";
 import { fetchWithAuth } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ async function getUsers() {
             return [];
         }
         const data = await res.json();
-        return data.users as User[];
+        return (data.users || []) as User[];
 
     } catch (error: any) {
         if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
@@ -38,6 +39,7 @@ export default async function UsersPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+                <CreateUserModal />
             </div>
 
             <div className="bg-white p-6 rounded-lg shadow">

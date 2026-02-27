@@ -19,7 +19,7 @@ async function getDevices() {
             return [];
         }
         const data = await res.json();
-        return data.devices as Device[];
+        return (data.devices || []) as Device[];
     } catch (error: any) {
         if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;
@@ -51,7 +51,7 @@ export default async function DevicesPage() {
                                     <Cpu className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-gray-900">{device.device.name || "Unnamed Device"}</h3>
+                                    <h3 className="font-semibold text-gray-900">{device.device?.name || "Unnamed Device"}</h3>
                                     <p className="text-sm text-gray-500">ID: {device._id}</p>
                                 </div>
                             </div>
@@ -60,8 +60,8 @@ export default async function DevicesPage() {
 
                         <div className="mt-4 border-t pt-4">
                             <div className="flex justify-between text-xs text-gray-500">
-                                <span>Sensors: {device.sensors.length}</span>
-                                <span>Actuators: {Object.keys(device.actuators).length}</span>
+                                <span>Sensors: {device.sensors?.length || 0}</span>
+                                <span>Actuators: {Object.keys(device.actuators || {}).length}</span>
                             </div>
                         </div>
                     </Link>
