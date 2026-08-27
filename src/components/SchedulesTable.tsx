@@ -20,12 +20,16 @@ export function SchedulesTable({ schedules: initialSchedules }: { schedules: Sch
     const handleDelete = async (id: string) => {
         if (confirm("Are you sure you want to delete this schedule?")) {
             try {
-                const res = await fetchClient(`/api/admin/schedules/${id}`, { method: 'DELETE' });
+                let res = await fetchClient(`/api/admin/schedules/${id}`, { method: 'DELETE' });
+                if (res.status === 404) {
+                    res = await fetchClient(`/api/schedules/${id}`, { method: 'DELETE' });
+                }
                 if (res.ok) {
                     setSchedules(schedules.filter((s) => s._id !== id));
                     router.refresh();
                 } else {
-                    alert("Failed to delete schedule");
+                    const data = await res.json().catch(() => ({}));
+                    alert(data.message || data.error || "Failed to delete schedule");
                 }
             } catch (err) {
                 console.error(err);

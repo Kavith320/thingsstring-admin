@@ -18,16 +18,20 @@ export function DeleteDeviceButton({ deviceId }: { deviceId?: string }) {
             setIsDeleting(true);
 
             try {
-                const res = await fetchClient(`/api/admin/devices/${deviceId}`, { method: 'DELETE' });
+                let res = await fetchClient(`/api/admin/devices/${deviceId}`, { method: 'DELETE' });
+                if (res.status === 404) {
+                    res = await fetchClient(`/api/devices/${deviceId}`, { method: 'DELETE' });
+                }
                 if (res.ok) {
                     router.push("/devices");
                     router.refresh();
                 } else {
-                    throw new Error("Failed to delete device");
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error(data.message || data.error || "Failed to delete device");
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.error(err);
-                alert("Error deleting device");
+                alert(err.message || "Error deleting device");
                 setIsDeleting(false);
             }
         }

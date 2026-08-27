@@ -24,21 +24,28 @@ export function CreateUserModal() {
         setError("");
 
         try {
-            const res = await fetchClient("/api/admin/users", {
+            let res = await fetchClient("/api/admin/users", {
                 method: "POST",
                 body: JSON.stringify(formData),
             });
 
+            if (res.status === 404) {
+                res = await fetchClient("/api/auth/register", {
+                    method: "POST",
+                    body: JSON.stringify(formData),
+                });
+            }
+
             if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.message || "Failed to create user");
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.message || data.error || "Failed to create user");
             }
 
             setIsOpen(false);
             setFormData({ name: "", email: "", password: "", role: "user" });
             router.refresh();
         } catch (err: any) {
-            setError(err.message);
+            setError(err.message || "Error creating user");
         } finally {
             setLoading(false);
         }

@@ -209,6 +209,16 @@ export default function TelemetryGraph({ history = [], timeFrameHours = 1 }: Tel
         );
     };
 
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return <div className="h-96 w-full bg-gray-50 rounded-lg animate-pulse" />;
+    }
+
     if (!history || history.length === 0) {
         return (
             <div className="p-8 text-center rounded-lg border border-dashed border-gray-300 bg-gray-50">
@@ -284,7 +294,7 @@ export default function TelemetryGraph({ history = [], timeFrameHours = 1 }: Tel
 
                 {/* Chart */}
                 <div className={`${isFullscreen ? "h-[calc(100vh-200px)]" : "h-96"}`}>
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                             <XAxis

@@ -22,10 +22,22 @@ const data = [
     { name: "Sun", users: 15, devices: 10 },
 ];
 
+import { useState, useEffect } from "react";
+
 export default function SystemActivityGraph() {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return <div className="h-80 w-full bg-gray-50 rounded-lg animate-pulse" />;
+    }
+
     return (
         <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <AreaChart
                     data={data}
                     margin={{

@@ -14,13 +14,17 @@ type Schedule = {
 
 async function getSchedules() {
     try {
-        const res = await fetchWithAuth("/api/admin/schedules", { next: { revalidate: 60 } });
+        let res = await fetchWithAuth("/api/admin/schedules", { next: { revalidate: 60 } });
+        if (res.status === 404) {
+            res = await fetchWithAuth("/api/schedules", { next: { revalidate: 60 } });
+        }
         if (!res.ok) {
-            console.error("Failed to fetch schedules");
+            console.error("Failed to fetch schedules:", res.status);
             return [];
         }
         const data = await res.json();
-        return data.schedules as Schedule[];
+        const schedulesList = data.schedules || data.data || (Array.isArray(data) ? data : []);
+        return schedulesList as Schedule[];
     } catch (error: any) {
         if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;

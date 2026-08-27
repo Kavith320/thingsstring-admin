@@ -1,12 +1,14 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
-export async function fetchClient(endpoint: string, options: RequestInit = {}) {
-    // Get token from cookie manually
-    const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+function getCookie(name: string) {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.match(new RegExp('(^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[2]) : null;
+}
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+export async function fetchClient(endpoint: string, options: RequestInit = {}) {
+    const token = getCookie('token');
 
     const headers = {
         "Content-Type": "application/json",
@@ -18,17 +20,15 @@ export async function fetchClient(endpoint: string, options: RequestInit = {}) {
         const res = await fetch(`${API_URL}${endpoint}`, {
             ...options,
             headers,
-            signal: controller.signal,
         });
 
-        clearTimeout(timeoutId);
+        if ((res.status === 401 || res.status === 403) && typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+            window.location.href = '/login';
+        }
+
         return res;
     } catch (error: any) {
-        clearTimeout(timeoutId);
-        if (error.name === 'AbortError') {
-            console.error(`Fetch to ${endpoint} timed out`);
-            throw new Error('Request timed out');
-        }
         throw error;
     }
 }
+

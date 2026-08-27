@@ -37,10 +37,10 @@ export default function LoginPage() {
                 // Assuming the API returns a token
                 if (data.token) {
                     document.cookie = `token=${data.token}; path=/; max-age=86400`; // 1 day
-                    router.push("/");
+                    window.location.href = "/";
                 } else {
                     // If backend sets HttpOnly cookie, just redirect
-                    router.push("/");
+                    window.location.href = "/";
                 }
             } else {
                 const errData = await res.json().catch(() => ({}));

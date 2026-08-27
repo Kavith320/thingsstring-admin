@@ -15,14 +15,17 @@ type User = {
 
 async function getUsers() {
     try {
-        const res = await fetchWithAuth("/api/admin/users", { next: { revalidate: 60 } });
+        let res = await fetchWithAuth("/api/admin/users", { next: { revalidate: 60 } });
+        if (res.status === 404) {
+            res = await fetchWithAuth("/api/users", { next: { revalidate: 60 } });
+        }
         if (!res.ok) {
-            console.error("Failed to fetch users");
+            console.error("Failed to fetch users:", res.status);
             return [];
         }
         const data = await res.json();
-        return (data.users || []) as User[];
-
+        const usersList = data.users || data.data || (Array.isArray(data) ? data : []);
+        return usersList as User[];
     } catch (error: any) {
         if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;

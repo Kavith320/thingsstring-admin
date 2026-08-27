@@ -1,6 +1,7 @@
 
 import { DeviceControlPanel } from "@/components/DeviceControlPanel";
 import { DeleteDeviceButton } from "@/components/DeleteDeviceButton";
+import { DeviceAdminActions } from "@/components/DeviceAdminActions";
 import SensorsGrid from "@/components/SensorsGrid";
 import TelemetryGraph from "@/components/TelemetryGraph";
 import { ArrowLeft, Clock, History, Settings, TrendingUp } from "lucide-react";
@@ -17,6 +18,7 @@ import { fetchWithAuth } from "@/lib/api";
 
 type DeviceDetail = {
     _id?: string;
+    disabled?: boolean;
     config?: {
         _id?: string;
         user_id?: string;
@@ -86,16 +88,28 @@ export default async function DeviceDetailPage({ params }: PageProps) {
             );
         }
 
+        const deviceIdentifier = device._id || device.config?._id || id;
+
         return (
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
                         <Link href="/devices" className="rounded-full bg-gray-100 p-2 hover:bg-gray-200 text-gray-600 transition-colors">
                             <ArrowLeft className="h-5 w-5" />
                         </Link>
-                        <h1 className="text-2xl font-bold text-gray-900">Device Details: {device.config?.device?.name || "Unknown Device"}</h1>
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Device Details: {device.config?.device?.name || "Unknown Device"}</h1>
+                            {device.disabled && (
+                                <span className="inline-block mt-1 rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">
+                                    DEVICE LOCKED OUT BY ADMIN
+                                </span>
+                            )}
+                        </div>
                     </div>
-                    <DeleteDeviceButton deviceId={device._id || device.config?._id} />
+                    <div className="flex items-center gap-3">
+                        <DeviceAdminActions deviceId={deviceIdentifier} isLocked={device.disabled} />
+                        <DeleteDeviceButton deviceId={deviceIdentifier} />
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -106,7 +120,7 @@ export default async function DeviceDetailPage({ params }: PageProps) {
                             <h2 className="text-lg font-medium text-gray-900">Configuration</h2>
                         </div>
                         <div className="space-y-2 text-sm text-gray-600">
-                            <p><strong>Device ID:</strong> {device.config?.device?.device_id || device._id || "N/A"}</p>
+                            <p><strong>Device ID:</strong> {device.config?.device?.device_id || deviceIdentifier || "N/A"}</p>
                             <p><strong>User ID:</strong> {device.config?.user_id || "N/A"}</p>
                             <p><strong>Model:</strong> {device.config?.device?.model || "N/A"}</p>
                             <p><strong>Sensors:</strong> {device.config?.sensors ? Object.keys(device.config.sensors).join(", ") : "None"}</p>
@@ -119,7 +133,7 @@ export default async function DeviceDetailPage({ params }: PageProps) {
                             <Clock className="h-5 w-5 text-gray-500" />
                             <h2 className="text-lg font-medium text-gray-900">Control Panel</h2>
                         </div>
-                        <DeviceControlPanel deviceId={device._id || device.config?._id} initialControl={device.control || {}} />
+                        <DeviceControlPanel deviceId={deviceIdentifier} initialControl={device.control || {}} />
                     </div>
                 </div>
 
@@ -155,3 +169,4 @@ export default async function DeviceDetailPage({ params }: PageProps) {
         );
     }
 }
+

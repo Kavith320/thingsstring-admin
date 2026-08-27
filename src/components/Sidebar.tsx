@@ -7,7 +7,11 @@ import {
   Users, 
   Cpu, 
   Calendar, 
-  Settings, 
+  Workflow,
+  Activity,
+  Wrench,
+  ShieldAlert,
+  Radio,
   LogOut 
 } from "lucide-react";
 
@@ -19,7 +23,18 @@ export function Sidebar() {
     { name: "Users", href: "/users", icon: Users },
     { name: "Devices", href: "/devices", icon: Cpu },
     { name: "Schedules", href: "/schedules", icon: Calendar },
+    { name: "Automations", href: "/automations", icon: Workflow },
+    { name: "System Health", href: "/health", icon: Activity },
+    { name: "Maintenance", href: "/maintenance", icon: Wrench },
+    { name: "Audit Logs", href: "/audit-logs", icon: ShieldAlert },
+    { name: "Broadcast Control", href: "/broadcast", icon: Radio },
   ];
+
+  const handleSignOut = () => {
+    // Clear token cookie by setting expiration in the past
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    window.location.href = "/login";
+  };
 
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-gray-900 text-white">
@@ -50,7 +65,10 @@ export function Sidebar() {
       </div>
 
       <div className="border-t border-gray-800 p-4">
-        <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+        <button
+          onClick={handleSignOut}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+        >
           <LogOut className="h-5 w-5" />
           Sign Out
         </button>
@@ -58,3 +76,4 @@ export function Sidebar() {
     </div>
   );
 }
+

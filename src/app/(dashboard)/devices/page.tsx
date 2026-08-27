@@ -13,13 +13,17 @@ type Device = {
 
 async function getDevices() {
     try {
-        const res = await fetchWithAuth("/api/admin/devices", { next: { revalidate: 60 } });
+        let res = await fetchWithAuth("/api/admin/devices", { next: { revalidate: 60 } });
+        if (res.status === 404) {
+            res = await fetchWithAuth("/api/devices", { next: { revalidate: 60 } });
+        }
         if (!res.ok) {
-            console.error("Failed to fetch devices");
+            console.error("Failed to fetch devices:", res.status);
             return [];
         }
         const data = await res.json();
-        return (data.devices || []) as Device[];
+        const devicesList = data.devices || data.data || (Array.isArray(data) ? data : []);
+        return devicesList as Device[];
     } catch (error: any) {
         if (error?.digest?.startsWith("NEXT_REDIRECT") || error?.digest === "DYNAMIC_SERVER_USAGE") {
             throw error;
