@@ -5,6 +5,11 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    // Device configs, telemetry and control documents are free-form JSON defined by firmware,
+    // so `any` is the honest type at those edges.
+    rules: { "@typescript-eslint/no-explicit-any": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
